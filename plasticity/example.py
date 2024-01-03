@@ -6,6 +6,10 @@ import jax.numpy as np
 import os
 import matplotlib.pyplot as plt
 
+
+"""
+Import JAX-FEM specific modules.
+"""
 from jax_fem.problem import Problem
 from jax_fem.solver import solver
 from jax_fem.utils import save_sol
@@ -15,8 +19,8 @@ from jax_fem.generate_mesh import box_mesh, get_meshio_cell_type, Mesh
 """
 Define constitutive relationship. 
 The function "get_tensor_map" overrides base class method. Generally, 
-JAX-FEM solves -div.f(u_grad,alpha_1,alpha_2,...,alpha_N) = b. Here, we have 
-f(u_grad,alpha_1,alpha_2,...,alpha_N) = sigma^n(u^n_grad, epsilon^{n-1}, sigma^{n-1}),
+JAX-FEM solves -div(f(u_grad,alpha_1,alpha_2,...,alpha_N)) = b. Here, we have 
+f(u_grad,alpha_1,alpha_2,...,alpha_N) = sigma_crt(u_crt_grad, epsilon_old, sigma_old),
 reflected by the function "stress_return_map"
 """
 class Plasticity(Problem):
@@ -117,8 +121,8 @@ def bottom(point):
 
 """
 Define Dirichlet boundary values. We fix the z-component of the 
-displacement field to be zero on the bottom side, and control the 
-z-component on the top side.
+displacement field to be zero on the 'bottom' side, and control the 
+z-component on the 'top' side.
 """
 def dirichlet_val_bottom(point):
     return 0.

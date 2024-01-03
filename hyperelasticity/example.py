@@ -5,6 +5,10 @@ import jax
 import jax.numpy as np
 import os
 
+
+"""
+Import JAX-FEM specific modules.
+"""
 from jax_fem.problem import Problem
 from jax_fem.solver import solver
 from jax_fem.utils import save_sol
@@ -14,7 +18,7 @@ from jax_fem.generate_mesh import box_mesh, get_meshio_cell_type, Mesh
 '''
 Define constitutive relationship. 
 The function "get_tensor_map" overrides base class method. 
-Generally, JAX-FEM solves -div.f(u_grad) = b.
+Generally, JAX-FEM solves -div(f(u_grad)) = b.
 Here, we define f(u_grad) = P. Notice how we first define psi (representing W), 
 and then use automatic differentiation (jax.grad) to obtain the P_fn function.
 ''' 

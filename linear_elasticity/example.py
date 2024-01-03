@@ -3,6 +3,11 @@ Import some useful modules
 """
 import jax.numpy as np
 import os
+
+
+"""
+Import JAX-FEM specific modules.
+"""
 from jax_fem.problem import Problem
 from jax_fem.solver import solver
 from jax_fem.utils import save_sol
@@ -15,8 +20,8 @@ logger.setLevel(logging.DEBUG)
 
 """
 Define constitutive relationship. 
-The function "get_tensor_map" overrides base class method. 
-Generally, JAX-FEM solves -div.f(u_grad) = b. Here, we have f(u_grad) = sigma.
+The function 'get_tensor_map' overrides base class method. 
+Generally, JAX-FEM solves -div(f(u_grad)) = b. Here, we have f(u_grad) = sigma.
 """
 class LinearElasticity(Problem):
 
@@ -69,8 +74,8 @@ def right(point):
 
 
 """
-Define Dirichlet boundary values. This means on the "left" side, 
-we apply the function "zero_dirichlet_val" to all components of 
+Define Dirichlet boundary values. This means on the 'left' side, 
+we apply the function 'zero_dirichlet_val' to all components of 
 the displacement variable u.
 """
 def zero_dirichlet_val(point):
@@ -80,9 +85,9 @@ dirichlet_bc_info = [[left] * 3, [0, 1, 2], [zero_dirichlet_val] * 3]
 
 
 """
-Define Neumann boundary locations, This means on the "right" side,
+Define Neumann boundary locations, This means on the 'right' side,
 we will perform the surface integral to get the tractions with the function
-"get_surface_maps" defined in the class "LinearElasticity".
+'get_surface_maps' defined in the class 'LinearElasticity'.
 """
 location_fns = [right]
 
