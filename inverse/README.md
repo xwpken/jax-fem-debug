@@ -26,7 +26,7 @@ $$
 \frac{\partial J}{\partial \alpha_i} = \frac{J(\alpha_i+h\alpha_i)-J(\alpha_i)}{h\alpha_i}
 $$
 
-The derivative of automatic differentiation will be calculated by the `jax.grad` with custom jacobian-vector product rules, which is already defined in the JAX-FEM.
+The derivative of automatic differentiation will be calculated by the `jax.grad` with custom vector-jacobian product rules, which is already defined in the JAX-FEM.
 
 
 ## Execution
