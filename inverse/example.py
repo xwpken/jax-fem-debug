@@ -42,8 +42,8 @@ class HyperElasticity(Problem):
         return [surface_map]
 
     def set_params(self, params):
-        E, rho, scale_d = params
-        self.E = E
+        Ew, Er, rho, scale_d = params
+        self.E = Ew
         self.internal_vars = [rho]
         self.fe.dirichlet_bc_info[-1][-1] = get_dirichlet_bottom(scale_d)
         self.fe.update_Dirichlet_boundary_conditions(self.fe.dirichlet_bc_info)

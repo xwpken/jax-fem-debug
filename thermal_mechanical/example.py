@@ -1,58 +1,44 @@
-"""
-Import some useful modules.
-"""
+# Import some useful modules.
 import jax
 import jax.numpy as np
 import os
 import glob
 
 
-"""
-Import JAX-FEM specific modules.
-"""
+# Import JAX-FEM specific modules.
 from jax_fem.generate_mesh import box_mesh, Mesh, get_meshio_cell_type
 from jax_fem.solver import solver
 from jax_fem.problem import Problem
 from jax_fem.utils import save_sol
 
 
-"""
-If you have multiple GPUs, set the one to use.
-"""
+
+# If you have multiple GPUs, set the one to use.
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 
-"""
-Define some useful directory paths.
-"""
+# Define some useful directory paths.
 crt_file_path = os.path.dirname(__file__)
 data_dir = os.path.join(crt_file_path, 'data')
 vtk_dir = os.path.join(data_dir, 'vtk')
 
 
-"""
-Define the thermal problem. The function 'get_tensor_map' is responsible for 
-the term (k*T_crt_grad, Q_grad) * dx. The function 'get_mass_map' is responsible 
-for the term (rho*Cp/dt*(T_crt-T_old), Q) * dx. The function 'set_params' makes 
-sure that the Neumann boundary conditions use the most updated T_old and laser 
-information, i.e., positional information like laser_center (x_l, y_l) and 
-'switch' controlling ON/OFF of the laser.
-"""
+# Define the thermal problem. 
+# The function 'get_tensor_map' is responsible for the term (k*T_crt_grad, Q_grad) * dx. 
+# The function 'get_mass_map' is responsible for the term (rho*Cp/dt*(T_crt-T_old), Q) * dx. 
+# The function 'set_params' makes sure that the Neumann boundary conditions use the most 
+# updated T_old and laser information, i.e., positional information like laser_center (x_l, y_l) and 
+# 'switch' controlling ON/OFF of the laser.
 class Thermal(Problem):
-    """We solve the following equation (weak form of FEM):
-    (rho*Cp/dt*(T_crt-T_old), Q) * dx + (k*T_crt_grad, Q_grad) * dx - (heat_flux, Q) * ds = 0
-    where T_crt is the trial function, and Q is the test function.
-    """
+    # We solve the following equation (weak form of FEM):
+    # (rho*Cp/dt*(T_crt-T_old), Q) * dx + (k*T_crt_grad, Q_grad) * dx - (heat_flux, Q) * ds = 0
+    # where T_crt is the trial function, and Q is the test function.
     def get_tensor_map(self):
-        """Override base class method.
-        """
         def fn(u_grad, T_old):
             return k*u_grad
         return fn
  
     def get_mass_map(self):
-        """Override base class method.
-        """
         def T_map(T, x, T_old):
             return rho*Cp*(T - T_old)/dt
         return T_map
@@ -69,7 +55,7 @@ class Thermal(Problem):
             return -np.array([q])
  
         def thermal_neumann_walls(u, point, old_T):
-            # q is the heat flux into the domain
+            # q is the heat flux into the domain.
             q_conv = h*(T0 - old_T[0])
             q_rad = SB_constant*emissivity*(T0**4 - old_T[0]**4)
             q = q_conv + q_rad
@@ -78,9 +64,7 @@ class Thermal(Problem):
         return [thermal_neumann_top, thermal_neumann_walls]
 
     def set_params(self, params):
-        """Override base class method.
-        Note that 'neumann' and 'mass' are reserved keywords.
-        """
+        # Override base class method.
         sol_T_old, laser_center, switch = params
 
         sol_T_old_top = self.fes[0].convert_from_dof_to_face_quad(sol_T_old, self.boundary_inds_list[0])
@@ -95,21 +79,16 @@ class Thermal(Problem):
         self.internal_vars = [self.fes[0].convert_from_dof_to_quad(sol_T_old)]
 
 
-
-"""
-Define the mechanics problem. Generally, JAX-FEM handles 
-(div(f(u_grad,alpha_1,alpha_2,...,alpha_N)),v_grad) * dx in the weak form. 
-Here, we have f(u_grad,alpha_1,alpha_2,...,alpha_N) = sigma_crt(u_crt_grad, epsilon_old, sigma_old, dT_crt, zeta_crt),
-where zeta_crt being the phase state variable. This is reflected by the function "stress_return_map"
-"""
+# Define the mechanics problem. 
+# Generally, JAX-FEM handles (div(f(u_grad,alpha_1,alpha_2,...,alpha_N)),v_grad) * dx 
+# in the weak form. Here, we have f(u_grad,alpha_1,alpha_2,...,alpha_N) = sigma_crt(u_crt_grad, epsilon_old, sigma_old, dT_crt, zeta_crt),
+# where zeta_crt being the phase state variable. This is reflected by the function "stress_return_map".
 class Plasticity(Problem):
-    """We solve the following equation (weak form of FEM):
-    (sigma(u_grad), v_grad) * dx = 0
-    where u is the trial function, and v is the test function.
-    """
+    # We solve the following equation (weak form of FEM):
+    # (sigma(u_grad), v_grad) * dx = 0
+    # where u is the trial function, and v is the test function.
     def custom_init(self):
-        """Initializing total strain, stress, temperature increment, and material phase.
-        """
+        # Initializing total strain, stress, temperature increment, and material phase.
         sigmas_old = np.zeros((len(self.fes[0].cells), self.fes[0].num_quads, self.fes[0].vec, self.dim))
         epsilons_old = np.zeros_like(sigmas_old)
         dT = np.zeros((len(self.fes[0].cells), self.fes[0].num_quads, 1))
@@ -117,8 +96,6 @@ class Plasticity(Problem):
         self.internal_vars = [sigmas_old, epsilons_old, dT, phase]
     
     def get_tensor_map(self):
-        """Override base class method.
-        """
         _, stress_return_map, _ = self.get_maps()
         return stress_return_map
 
@@ -171,10 +148,9 @@ class Plasticity(Problem):
         return vmap_strain, vmap_stress_return_map, vmap_yield_val_fn
 
     def update_stress_strain(self, sol, params):
-        """Update sigmas and epsilons
-        Keep dT and phase unchanged
-        Output plastic_info for debugging purpose: we want to know if plastic deformation occurs, and the x-x direction stress
-        """
+        # Update sigmas and epsilons
+        # Keep dT and phase unchanged
+        # Output plastic_info for debugging purpose: we want to know if plastic deformation occurs, and the x-x direction stress
         # (num_cells, 1, num_nodes, vec, 1) * (num_cells, num_quads, num_nodes, 1, dim) -> (num_cells, num_quads, num_nodes, vec, dim) 
         u_grads = np.take(sol, self.fes[0].cells, axis=0)[:, None, :, :, None] * self.fes[0].shape_grads[:, :, :, None, :] 
         u_grads = np.sum(u_grads, axis=2) # (num_cells, num_quads, vec, dim)
@@ -186,9 +162,8 @@ class Plasticity(Problem):
         return [sigmas_update, epsilons_update, dT, phase], plastic_info
 
     def update_dT_and_phase(self, dT, T, params):
-        """Update dT and phase
-        Keep sigmas and epsilons unchanged
-        """
+        # Update dT and phase
+        # Keep sigmas and epsilons unchanged
         sigmas, epsilons, _, phase = params
         dT_quad = self.fes[0].convert_from_dof_to_quad(dT)
         T_quad = self.fes[0].convert_from_dof_to_quad(T)
@@ -199,15 +174,13 @@ class Plasticity(Problem):
         return sigmas, epsilons, dT_quad, phase
 
     def set_params(self, params):
-        """Override base class method.
-        """
+        # Override base class method.
         self.internal_vars = params
 
 
-"""
-Define material properties. We generally assume Inconel 625 material is used. 
-SI units are used throughout this example.
-"""
+# Define material properties. 
+# We generally assume Inconel 625 material is used. 
+# SI units are used throughout this example.
 Cp = 588. # heat capacity
 rho = 8440. # material density
 k = 15. # thermal conductivity
@@ -222,18 +195,14 @@ LIQUID = 1 # liquid flag
 SOLID = 2 # solid flag
 
 
-"""
-Define laser properties.
-"""
+# Define laser properties.
 vel = 0.5 # laser scanning velocity
 rb = 0.05e-3 # laser beam size
 P = 50. # laser power
 
 
-"""
-Specify mesh-related information. We use first-order hexahedron element for both 
-T_crt and u_crt.
-"""
+# Specify mesh-related information. 
+# We use first-order hexahedron element for both T_crt and u_crt.
 ele_type = 'HEX8'
 cell_type = get_meshio_cell_type(ele_type)
 Nx, Ny, Nz = 50, 20, 5
@@ -242,9 +211,7 @@ meshio_mesh = box_mesh(Nx, Ny, Nz, Lx, Ly, Lz, data_dir)
 mesh = Mesh(meshio_mesh.points, meshio_mesh.cells_dict[cell_type])
 
 
-"""
-Define boundary locations.
-"""
+# Define boundary locations.
 def top(point):
     return np.isclose(point[2], Lz, atol=1e-5)
 
@@ -259,9 +226,7 @@ def walls(point):
     return left | right | front | back
 
 
-"""
-Specify boundary conditions and problem definitions.
-"""
+# Specify boundary conditions and problem definitions.
 # Dirichlet BC values for thermal problem
 def thermal_dirichlet_bottom(point):
     return T0
@@ -285,17 +250,13 @@ params_u = problem_u.internal_vars
 sol_u_list = [np.zeros((problem_u.fes[0].num_total_nodes, problem_u.fes[0].vec))]
 
 
-"""
-Do some cleaning work.
-"""
+# Do some cleaning work.
 files = glob.glob(os.path.join(vtk_dir, f'*'))
 for f in files:
     os.remove(f)
 
 
-"""
-Save initial solution to local folder.
-"""
+# Save initial solution to local folder.
 vtk_path = os.path.join(vtk_dir, f"u_{0:05d}.vtu")
 save_sol(problem_T.fes[0], sol_T_old, vtk_path, point_infos=[('u', np.zeros((len(sol_T_old), 3)))], 
                                                 cell_infos=[('f_plus', np.zeros(len(mesh.cells))),
@@ -303,9 +264,7 @@ save_sol(problem_T.fes[0], sol_T_old, vtk_path, point_infos=[('u', np.zeros((len
                                                             ('phase', np.mean(params_u[-1][:, :, 0], axis=1))])
 
 
-"""
-Start the major loop of time iteration.
-"""
+# Start the major loop of time iteration.
 dt = 2*1e-6
 laser_on_t = 0.5*Lx/vel
 simulation_t = 2*laser_on_t
