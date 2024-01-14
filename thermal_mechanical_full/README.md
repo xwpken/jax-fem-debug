@@ -26,6 +26,7 @@ k\nabla T \cdot \boldsymbol{n} &= q &&  \textrm{on} \nobreakspace \nobreakspace 
 $$
 
 where $q$ is heat flux. $T_0$ is the the ambient temperature. The governing PDE of momentum balance states that:
+
 $$
 \begin{align*}
     -\nabla \cdot \boldsymbol{\sigma} &= \boldsymbol{0} && \textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f], \nonumber \\
