@@ -4,7 +4,7 @@
 
 ### Governing Equations
 
-We solve a time-dependent problem that involves full coupling (temperature field $T$ and displacement field $\boldsymbol{u}$ interact with each other). Here, we refer to the example shown in [1], where the problem consists of a quarter of a square plate $\Omega_s=[0, L_x]\times[0,L_y]$ perforated by a circular hole $\Omega_c=\left\{(x,y)|x^2+y^2 < R \right\{$, i.e., $\Omega=\Omega_s\setminus\Omega_c$.
+We solve a time-dependent problem that involves full coupling (temperature field $T$ and displacement field $\boldsymbol{u}$ interact with each other). Here, we refer to the example shown in [1], where the problem consists of a quarter of a square plate $\Omega_s=[0, L_x]\times[0,L_y]$ perforated by a circular hole $\Omega_c=\left\{(x,y)|x^2+y^2 \textless R \right\{$, i.e., $\Omega=\Omega_s\setminus\Omega_c$.
 
 The linearized thermoelastic constitutive equations are given by:
 
