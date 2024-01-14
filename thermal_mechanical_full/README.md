@@ -16,22 +16,19 @@ where $\lambda$ and $\mu$ are the Lamé coefficients. $\rho$ is the materail den
 
 The governing PDE of heat equation without source terms states that:
 
-$$
-\begin{align*}
+$$\begin{align*}
 \rho T_0 \dot{s}&=\nabla\cdot({\kappa\nabla T})& &\textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f],\\
 T  &= T_0 & &\textrm{at} \nobreakspace \nobreakspace t=0, \\
 T&=T_D & &\textrm{on} \nobreakspace \nobreakspace \Gamma_{D} \times (0,t_f], \\
 k\nabla T \cdot \boldsymbol{n} &= q &&  \textrm{on} \nobreakspace \nobreakspace \Gamma_N \times (0,t_f].
-\end{align*}
-$$
+\end{align*}$$
+
 where $q$ is heat flux. $T_0$ is the the ambient temperature. The governing PDE of momentum balance states that:
-$$
-\begin{align*}
+$$\begin{align*}
     -\nabla \cdot \boldsymbol{\sigma} &= \boldsymbol{0} && \textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f], \nonumber \\
     \boldsymbol{u} &= \boldsymbol{u}_D    && \textrm{on} \nobreakspace \nobreakspace \Gamma_D\times(0, t_f],   \\
     \boldsymbol{\sigma} \cdot \boldsymbol{n} &= \boldsymbol{0}   && \textrm{on} \nobreakspace \nobreakspace \Gamma_N\times(0, t_f].
-\end{align*}
-$$
+\end{align*}$$
 
 ### Discretization in Time
 
@@ -41,24 +38,21 @@ $$\rho T_0 \dot{s} = \rho C_\varepsilon\dot{T}+\kappa T_0tr(\dot{\boldsymbol{\va
 
 We replace the time derivative by an implicit Euler scheme:
 
-$$
-\begin{align*}
+$$\begin{align*}
     \rho C_\varepsilon\displaystyle\frac{T^n-T^{n-1}}{\Delta t}+\kappa T_0tr(\displaystyle\frac{\boldsymbol{\varepsilon}^n-\boldsymbol{\varepsilon}^{n-1}}{\Delta t})&=\nabla\cdot({\kappa\nabla T^n}) && \textrm{in}  \nobreakspace \nobreakspace \Omega , \nonumber \\
     T^n&=T_{inc} & &\textrm{on} \nobreakspace \nobreakspace \Gamma_{hole}, \\
     k\nabla T^n \cdot \boldsymbol{n} &= q_0 &&  \textrm{on} \nobreakspace \nobreakspace \Gamma_{square}.
-\end{align*}
-$$
+\end{align*}$$
+
 where $T^n$ and $\boldsymbol{\varepsilon}^n$ the unknown variable field to be solved, $T^{n-1}$ and $\boldsymbol{\varepsilon}^{n-1}$ are known from previous time step. We have imposed Dirichlet boundary condition on the circular hole boudary with $T_{inc}$ being the assigned temperature. On the other boundaries, the zero Neumann boundary conditions $q_0 = 0$ is considered. It should be noted that in this example, the temperature variation $\Theta = T-T_0$ is treated as the unknown variable field, which also appears in the stress constitutive relation.
 
 With the stress constitutive relation defined above, the displacemnet filed $\boldsymbol{u}^n$ at the current time step satisfies that:
 
-$$
-\begin{align*}
+$$\begin{align*}
     -\nabla \cdot (\boldsymbol{\sigma}^n(\nabla\boldsymbol{u}^n,T^n)) &= \boldsymbol{0} && \textrm{in}  \nobreakspace \nobreakspace \Omega, \nonumber \\
     \boldsymbol{u}^n &= \boldsymbol{u}_D    && \textrm{on} \nobreakspace \nobreakspace \Gamma_D,   \\
     \boldsymbol{\sigma}^n \cdot \boldsymbol{n} &= \boldsymbol{0}   && \textrm{on} \nobreakspace \nobreakspace \Gamma_N.
-\end{align*}
-$$
+\end{align*}$$
 
 
 ### Weak form
