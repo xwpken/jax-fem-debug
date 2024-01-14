@@ -15,7 +15,7 @@ In this tutorial, we demostrate the process to calculate the derivative by autom
 The objective function is defined as:
 
 $$J= \sum_{i=1}^{N_d}(\boldsymbol{u}[i])^2$$
-where $N_d$ is the total number of degrees of freedom. $\boldsymbol{u}[i]$ is the $\boldsymbol{i}$th component of the dispalcement vector $\boldsymbol{u}$, which is obtained by solving the following discretized governing PDE:
+where $N_d$ is the total number of degrees of freedom. $\boldsymbol{u}[i]$ is the $\boldsymbol{i}$ th component of the dispalcement vector $\boldsymbol{u}$, which is obtained by solving the following discretized governing PDE:
 
 $$
 \boldsymbol{C}(\boldsymbol{u},\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,...\boldsymbol{\theta}_N)=\boldsymbol{0}
