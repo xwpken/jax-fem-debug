@@ -2,7 +2,7 @@
 
 ## Formulation
 
-In this tutorial, we compare the derivatives computed by automatic differentiation and finite difference method. The same hyperelastic body as in our hyperelastic example is considered here, i.e., a unit cube with a neo-Hookean solid model. In addition, we have the following definitions:
+In this tutorial, we demostrate the process to calculate the derivative by automatic differentiation and validate the results by the finite difference method. The same hyperelastic body as in our [hyperelasticity example](https://github.com/tianjuxue/jax-fem/tree/main/demos/hyperelasticity) is considered here, i.e., a unit cube with a neo-Hookean solid model. In addition, we have the following definitions:
 * $\Omega=(0,1)\times(0,1)\times(0,1)$ (a unit cube)
 *  $b=[0, 0, 0]$
 * $\Gamma_{D}=(0,1)\times(0,1)\times0$
@@ -12,21 +12,29 @@ In this tutorial, we compare the derivatives computed by automatic differentiati
 * $\Gamma_{N_2}=\partial\Omega\backslash(\Gamma_{D}\cup\Gamma_{N_1})$
 * $\boldsymbol{t}_{N_2}=[0, 0, 0]$
 
-The response function is defined as:
+The objective function is defined as:
 
 $$
-J= \sum_{i=1}^{N_d}u_i^2(\alpha_1,\alpha_2,...\alpha_N)
+J= \sum_{i=1}^{N_d}(\boldsymbol{u}[i])^2
+$$
+where $N_d$ is the total number of degrees of freedom. $\boldsymbol{u}[i]$ is the $i$th component of the dispalcement vector $\boldsymbol{u}$, which is obtained by solving the following discretized governing PDE:
+
+$$
+\boldsymbol{C}(\boldsymbol{u},\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,...\boldsymbol{\theta}_N)=\boldsymbol{0}
 $$
 
-where $N_d$ is the total number of degrees of freedom. Here, we set up three variables, $\alpha_1 = E$ the elasticity modulus, $\alpha_2 =\rho$ the material density, and $\alpha_3 =\beta$ the scale factor of the Dirichlet boundary conditions.
+where $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,...\boldsymbol{\theta}_N$ are the parameter vectors. Here, we set up three parameters, $\boldsymbol{\theta}_1 = \boldsymbol{E}$ the elasticity modulus, $\boldsymbol{\theta}_2 =\boldsymbol{\rho}$ the material density, and $\boldsymbol{\theta}_3 =\boldsymbol{\beta}$ the scale factor of the Dirichlet boundary conditions.
+
+We can see that $\boldsymbol{u}(\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,...\boldsymbol{\theta}_N)$ is the implicit function of the parameter vectors. In JAX-FEM, users can easily compute the derivative of the objective function with respect to these parameters through automatic differentiation. We first wrap the forward problem with the function `jax_fem.solver.ad_wrapper`, which defines the implicit differentiation through `@jax.custom_vjp`. Next, we can use the `jax.grad` to calculate the derivative. 
 
 
-To calculate the derivative of the response function to the three variables above, we give a small perturbation $h$. With the finite difference method, the derivative can be written as:
+We then use the forward differnce scheme to validate the results. The derivative of the objective with respect to the $k$th component of the parameter vector $\boldsymbol{\theta}_i$ is defined as:
 $$
-\frac{\partial J}{\partial \alpha_i} = \frac{J(\alpha_i+h\alpha_i)-J(\alpha_i)}{h\alpha_i}
+\frac{\partial J}{\partial \boldsymbol{\theta}_i[k]} = \frac{J(\boldsymbol{\theta}_i+h\boldsymbol{\theta}_i[k])-J(\boldsymbol{\theta}_i)}{h\boldsymbol{\theta}_i[k]}
 $$
 
-The derivative of automatic differentiation will be calculated by the `jax.grad` with custom vector-jacobian product rules, which is already defined in the JAX-FEM.
+where $h$ is a small perturbation.
+
 
 
 ## Execution
