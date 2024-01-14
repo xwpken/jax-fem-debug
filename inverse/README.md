@@ -27,9 +27,7 @@ We can see that $\boldsymbol{u}(\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,...\
 
 
 We then use the forward differnce scheme to validate the results. The derivative of the objective with respect to the $k$th component of the parameter vector $\boldsymbol{\theta}_i$ is defined as:
-$$
-\frac{\partial J}{\partial \boldsymbol{\theta}_i[k]} = \frac{J(\boldsymbol{\theta}_i+h\boldsymbol{\theta}_i[k])-J(\boldsymbol{\theta}_i)}{h\boldsymbol{\theta}_i[k]}
-$$
+$$\frac{\partial J}{\partial \boldsymbol{\theta}_i[k]} = \frac{J(\boldsymbol{\theta}_i+h\boldsymbol{\theta}_i[k])-J(\boldsymbol{\theta}_i)}{h\boldsymbol{\theta}_i[k]}$$
 
 where $h$ is a small perturbation.
 
