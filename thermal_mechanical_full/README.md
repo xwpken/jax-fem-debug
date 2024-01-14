@@ -16,11 +16,14 @@ where $\lambda$ and $\mu$ are the Lamé coefficients. $\rho$ is the materail den
 
 The governing PDE of heat equation without source terms states that:
 
-$$\begin{align*}\rho T_0 \dot{s}&=\nabla\cdot({\kappa\nabla T})& &\textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f],\\
+$$
+\begin{align*}
+\rho T_0 \dot{s}&=\nabla\cdot({\kappa\nabla T})& &\textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f],\\
 T  &= T_0 & &\textrm{at} \nobreakspace \nobreakspace t=0, \\
 T&=T_D & &\textrm{on} \nobreakspace \nobreakspace \Gamma_{D} \times (0,t_f], \\
-k\nabla T \cdot \boldsymbol{n} &= q &&  \textrm{on} \nobreakspace \nobreakspace \Gamma_N \times (0,t_f].
-\end{align*}$$
+k\nabla T \cdot \boldsymbol{n} &= q &&  \textrm{on} \nobreakspace \nobreakspace \Gamma_N \times (0,t_f],
+\end{align*}
+$$
 
 where $q$ is heat flux. $T_0$ is the the ambient temperature. The governing PDE of momentum balance states that:
 $$\begin{align*}
