@@ -26,11 +26,13 @@ k\nabla T \cdot \boldsymbol{n} &= q &&  \textrm{on} \nobreakspace \nobreakspace 
 $$
 
 where $q$ is heat flux. $T_0$ is the the ambient temperature. The governing PDE of momentum balance states that:
-$$\begin{align*}
+$$
+\begin{align*}
     -\nabla \cdot \boldsymbol{\sigma} &= \boldsymbol{0} && \textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f], \nonumber \\
     \boldsymbol{u} &= \boldsymbol{u}_D    && \textrm{on} \nobreakspace \nobreakspace \Gamma_D\times(0, t_f],   \\
     \boldsymbol{\sigma} \cdot \boldsymbol{n} &= \boldsymbol{0}   && \textrm{on} \nobreakspace \nobreakspace \Gamma_N\times(0, t_f].
-\end{align*}$$
+\end{align*}
+$$
 
 ### Discretization in Time
 
