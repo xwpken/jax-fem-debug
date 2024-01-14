@@ -26,7 +26,7 @@ where $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,...\boldsymbol{\theta}_N$ are
 We can see that $\boldsymbol{u}(\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,...\boldsymbol{\theta}_N)$ is the implicit function of the parameter vectors. In JAX-FEM, users can easily compute the derivative of the objective function with respect to these parameters through automatic differentiation. We first wrap the forward problem with the function `jax_fem.solver.ad_wrapper`, which defines the implicit differentiation through `@jax.custom_vjp`. Next, we can use the `jax.grad` to calculate the derivative. 
 
 
-We then use the forward differnce scheme to validate the results. The derivative of the objective with respect to the $k$th component of the parameter vector $\boldsymbol{\theta}_i$ is defined as:
+We then use the forward differnce scheme to validate the results. The derivative of the objective with respect to the $k\text{th}$ component of the parameter vector $\boldsymbol{\theta}_i$ is defined as:
 $$\frac{\partial J}{\partial \boldsymbol{\theta}_i[k]} = \frac{J(\boldsymbol{\theta}_i+h\boldsymbol{\theta}_i[k])-J(\boldsymbol{\theta}_i)}{h\boldsymbol{\theta}_i[k]}$$
 
 where $h$ is a small perturbation.
