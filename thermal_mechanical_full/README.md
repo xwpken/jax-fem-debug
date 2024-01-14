@@ -18,6 +18,14 @@ The governing PDE of heat equation without source terms states that:
 
 $$
 \begin{align*}
+    -\nabla \cdot \boldsymbol{\sigma} &= \boldsymbol{0} && \textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f], \nonumber \\
+    \boldsymbol{u} &= \boldsymbol{u}_D    && \textrm{on} \nobreakspace \nobreakspace \Gamma_D\times(0, t_f],   \\
+    \boldsymbol{\sigma} \cdot \boldsymbol{n} &= \boldsymbol{0}   && \textrm{on} \nobreakspace \nobreakspace \Gamma_N\times(0, t_f].
+\end{align*}
+$$
+
+$$
+\begin{align*}
 \rho T_0 \dot{s}&=\nabla\cdot({\kappa\nabla T})& &\textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f],\\
 T  &= T_0 & &\textrm{at} \nobreakspace \nobreakspace t=0, \\
 T&=T_D & &\textrm{on} \nobreakspace \nobreakspace \Gamma_{D} \times (0,t_f], \\
