@@ -3,9 +3,8 @@ This example deals with scalar wave equations.
 Also, see jax-fem/demos/wave/fenics.py
 """
 
+# Import some useful modules.
 import os
-import time
-
 import jax
 import jax.numpy as np
 import jax.flatten_util
@@ -13,10 +12,13 @@ import meshio
 import numpy as onp
 import matplotlib.pyplot as plt
 
+
+# Import JAX-FEM specific modules.
 from jax_fem.solver import solver
 from jax_fem.generate_mesh import Mesh, get_meshio_cell_type
 from jax_fem.utils import save_sol, modify_vtu_file
 from jax_fem.problem import Problem
+
 
 class wave(Problem):
     
@@ -46,20 +48,20 @@ class wave(Problem):
             cell_v_grads_JxW = cell_v_grads_JxW_list[0]
             cell_JxW = cell_JxW[0]
             
-            ## Handles the term 'c^2 * dt^2 * inner(grad(u^n),grad(v)) * dx'
+            ## Handles the term 'c^2 * dt^2 * inner(grad(u_crt),grad(v)) * dx'
             # (1, num_nodes, vec, 1) * (num_quads, num_nodes, 1, dim) -> (num_quads, num_nodes, vec, dim) 
             # -> (num_quads, vec, dim)
             u_grad = np.sum(cell_sol[None,:,:,None] * cell_shape_grads[:,:,None,:],axis=1)
             # (num_quads, 1, vec, dim) * (num_quads, num_nodes, 1, dim) ->  (num_nodes, vec) 
             val1 = np.sum(c**2 * dt**2 * u_grad[:,None,:,:] * cell_v_grads_JxW,axis=(0,-1))
             
-            ## Handles the term 'u.v * dx'
+            ## Handles the term 'inner(u_crt,v) * dx'
             # (1, num_nodes, vec) * (num_quads, num_nodes, 1) -> (num_quads, vec) 
             u = np.sum(cell_sol[None,:,:] * self.fes[0].shape_vals[:,:,None],axis=1)
             # (num_quads, 1, vec) * (num_quads, num_nodes, 1) * (num_quads, 1, 1) -> (num_nodes, vec) 
             val2 = np.sum(u[:,None,:] * self.fes[0].shape_vals[:,:,None] * cell_JxW[:,None,None],axis=0)
             
-            ## Handles the term '(2*u(t-dt) - u(t-2*dt))* v * dx'
+            ## Handles the term '((2*u_old_dt - u_old_2dt) * v) * dx'
             # (num_quads, 1, vec) * (num_quads, num_nodes, 1) * (num_quads, 1, 1) -> (num_nodes, vec) 
             val3 = np.sum((2 * cell_sol_dt - cell_sol_2dt)[:,None,:] * self.fes[0].shape_vals[:,:,None] * cell_JxW[:,None,None],axis=0) 
 
@@ -136,6 +138,7 @@ def main_fns():
     input_dir = os.path.join(os.path.dirname(__file__), 'input')
     output_dir = os.path.join(os.path.dirname(__file__), 'output')
     
+    # First run `python -m demos.wave.fenics` to generate these numpy files
     ele_type = 'TRI3'
     Lx, Ly = 1.0, 1.0
     points = onp.load(os.path.join(input_dir, f'numpy/points.npy'))
@@ -160,19 +163,20 @@ def main_fns():
     
     dirichlet_bc_info = [[left, right, bottom, top],[0]*4,[ones_dirichlet]*4]
     
-    # Solve
     problem = wave(mesh, vec=1, dim=2, ele_type = ele_type, gauss_order=2, dirichlet_bc_info = dirichlet_bc_info)
     sol_2dt = np.zeros((len(points),1))
     sol_dt = np.zeros((len(points),1))
     
+    # Start the major loop of time iteration.
     for i in range(steps):
         print(f'Time increment{i+1}\n')
         problem.set_params([sol_2dt,sol_dt])
-        sol = solver(problem, linear=True, use_petsc=True)[0]
-        vtk_path_u = os.path.join(output_dir, f'vtk/u_{i}.vtk')
-        save_sol(problem.fes[0], sol, vtk_path_u)
+        sol = solver(problem, linear=True, use_petsc=False)[0]
         sol_2dt = sol_dt
         sol_dt = sol
+        # Store the solution to local file.
+        vtk_path_u = os.path.join(output_dir, f'vtk/u_{i}.vtk')
+        save_sol(problem.fes[0], sol, vtk_path_u)
     
     print(f"Max u = {onp.max(sol)}, Min u = {onp.min(sol)}")
 

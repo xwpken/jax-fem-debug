@@ -25,8 +25,8 @@ V = FunctionSpace(mesh, "Lagrange", 1)
 bcs = DirichletBC(V, Constant(1.), "on_boundary") # Pure Dirichlet boundary conditions
 
 # Define variational problem
-u0 = interpolate(Constant(0.0), V) # u(t-2*dt)
-u1 = interpolate(Constant(0.0), V) # u(t-dt)
+u0 = interpolate(Constant(0.0), V) # u_old_2dt
+u1 = interpolate(Constant(0.0), V) # u_old_dt
 
 u = TrialFunction(V)
 v = TestFunction(V)
@@ -40,7 +40,6 @@ for n in range(steps):
     solve(a==L, u, bcs)
     u0.assign(u1)
     u1.assign(u)
-    print(f"Max u = {onp.max(u.vector()[:])}, Min u = {onp.min(u.vector()[:])}")
 
 print(f"Max u = {onp.max(u.vector()[:])}, Min u = {onp.min(u.vector()[:])}")
 

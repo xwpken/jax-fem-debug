@@ -22,7 +22,7 @@ We have the following definitions:
 
 ### Discretization in Time
 
-Let us first discretize in time. With backward time difference:
+We first calculate the time derivative with the backward difference scheme:
 
 $$\displaystyle\frac{\partial^2 u}{\partial t^2}\approx\displaystyle\frac{u^{n}-2u^{n-1}+u^{n-2}}{\Delta t^2}$$
 
@@ -50,7 +50,7 @@ from the `jax-fem/` directory.
 
 Results can be visualized with *ParaWiew*.
 <p align="middle">
-  <img src="output/pressure.gif" width="600" />
+  <img src="material/pressure.gif" width="600" />
 </p>
 <p align="middle">
     <em >Wave: pressure</em>

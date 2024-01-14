@@ -17,8 +17,8 @@ domain = Rectangle(Point(0., 0.), Point(L, L)) - Circle(Point(0., 0.), R, 100)
 mesh = generate_mesh(domain, N)
 
 # Define parameters
-T0 = Constant(293.)
-DThole = Constant(10.)
+T0 = Constant(293.) # ambient temperature
+DThole = Constant(10.) # temperature change at hole boundary
 E = 70e3
 nu = 0.3
 lmbda = Constant(E*nu/((1+nu)*(1-2*nu)))
@@ -69,7 +69,7 @@ therm_form = (cV*(dTheta-Thetaold)/dt*Theta_ +
 form = mech_form + therm_form
 
 # Compute solution
-Nincr = 100
+Nincr = 200
 t = onp.logspace(1, 4, Nincr+1)
 U = Function(V)
 for (i, dti) in enumerate(onp.diff(t)):
