@@ -22,7 +22,7 @@ We have the following definitions:
 
 ### Discretization in Time
 
-We first calculate the time derivative with the backward difference scheme:
+We first approximate the second-order time derivative with the backward difference scheme:
 
 $$\displaystyle\frac{\partial^2 u}{\partial t^2}\approx\displaystyle\frac{u^{n}-2u^{n-1}+u^{n-2}}{\Delta t^2}$$
 

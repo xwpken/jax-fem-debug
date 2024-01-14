@@ -23,7 +23,7 @@ $$
 \rho T_0 \dot{s}&=\nabla\cdot({k\nabla T})& &\textrm{in}  \nobreakspace \nobreakspace \Omega \times(0, t_f],\\
 T  &= T_0 & &\textrm{at} \nobreakspace \nobreakspace t=0, \\
 T&=T_D & &\textrm{on} \nobreakspace \nobreakspace \Gamma_{D} \times (0,t_f], \\
-k\nabla T \cdot \boldsymbol{n} &= q &&  \textrm{on} \nobreakspace \nobreakspace \Gamma_N \times (0,t_f],
+k\nabla T \cdot \boldsymbol{n} &= q &&  \textrm{on} \nobreakspace \nobreakspace \Gamma_N \times (0,t_f].
 \end{align*}
 $$
 
